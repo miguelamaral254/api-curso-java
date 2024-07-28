@@ -14,28 +14,29 @@ public class PersonController {
     @Autowired
     private PersonServices service;
 
-    @RequestMapping(value = "/{id}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public Person findById(@PathVariable(value = "id") String id) {
-        return service.findById(id);
-    }
-
-    @RequestMapping(value = "/all", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/all", produces = MediaType.APPLICATION_JSON_VALUE)
     public List<Person> findAll() {
         return service.findAll();
     }
 
-    @RequestMapping(method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public Person findById(@PathVariable(value = "id") Long id) {
+        return service.findById(id);
+    }
+
+
+    @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
     public Person createPerson(@RequestBody Person person) {
         return service.createPerson(person);
     }
 
-    @RequestMapping(value = "/{id}", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
-    public Person updatePerson(@PathVariable(value = "id") String id, @RequestBody Person person) {
-        return service.updatePerson(id, person);
+    @PutMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
+    public Person updatePerson(@PathVariable(value = "id") Long id, @RequestBody Person person) {
+        return service.updatePerson(person);
     }
 
-    @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
-    public void deletePerson(@PathVariable(value = "id") String id) {
+    @DeleteMapping(value = "/{id}")
+    public void deletePerson(@PathVariable(value = "id") Long id) {
         service.deletePerson(id);
     }
 }

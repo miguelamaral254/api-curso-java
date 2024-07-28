@@ -1,73 +1,54 @@
 package com.example.demo.services;
 
 import com.example.demo.model.Person;
+import com.example.demo.repository.PersonRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.context.config.ConfigDataResourceNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicLong;
 import java.util.logging.Logger;
 
 @Service
 public class PersonServices {
-    private final AtomicLong counter = new AtomicLong();
     private Logger logger = Logger.getLogger(PersonServices.class.getName());
     private List<Person> persons = new ArrayList<>();
+    @Autowired
+    PersonRepository repository;
 
     public List<Person> findAll() {
         logger.info("Finding all persons!");
-        if (persons.isEmpty()) {
-            for (int i = 1; i < 8; i++) {
-                Person person = mockPerson(i);
-                persons.add(person);
-            }
-        }
-        return persons;
+        return repository.findAll();
     }
 
-    public Person findById(String id) {
+    public Person findById(Long id) {
         logger.info("Finding one person!");
-        return persons.stream()
-                .filter(person -> String.valueOf(person.getId()).equals(id))
-                .findFirst()
-                .orElse(null);
+        return repository.findById(id).orElseThrow();
     }
 
     public Person createPerson(Person person) {
         logger.info("Creating new person!");
-        person.setId(counter.incrementAndGet());
-        persons.add(person);
-        return person;
+        return repository.save(person);
     }
 
-    public Person updatePerson(String id, Person updatedPerson) {
-        logger.info("Updating person with ID " + id);
-        for (Person person : persons) {
-            if (String.valueOf(person.getId()).equals(id)) {
-                person.setFirstName(updatedPerson.getFirstName());
-                person.setLastName(updatedPerson.getLastName());
-                person.setAddress(updatedPerson.getAddress());
-                person.setGender(updatedPerson.getGender());
-                person.setAge(updatedPerson.getAge());
-                return person;
-            }
-        }
-        return null; // Or throw an exception if person not found
+    public Person updatePerson(Person person) {
+        logger.info("Updating person with ID ");
+        Person entity = repository.findById(person.getId()).orElseThrow();
+        entity.setFirstName(person.getFirstName());
+        entity.setLastName(person.getLastName());
+        entity.setAddress(person.getAddress());
+        entity.setAge(person.getAge());
+        entity.setGender(person.getGender());
+        return repository.save(person);
     }
 
-    public void deletePerson(String id) {
+    public void deletePerson(Long id) {
         logger.info("Deleting a person!");
-        persons.removeIf(p -> String.valueOf(p.getId()).equals(id));
+        var entity = repository.findById(id).orElseThrow();
+        repository.delete(entity);
+
     }
 
-    private Person mockPerson(int i) {
-        Person person = new Person();
-        person.setId(counter.incrementAndGet());
-        person.setFirstName("Person name " + i);
-        person.setLastName("Person LastName " + i);
-        person.setAddress("Person " + i + " Address");
-        person.setGender("Person " + i + " gender");
-        person.setAge(26 + i);
-        return person;
-    }
+
 }

@@ -1,18 +1,30 @@
 package com.example.demo.model;
 
+import jakarta.persistence.*;
+
 import java.io.Serializable;
 import java.util.Objects;
 
+@Entity
+@Table(name = "person")
 public class Person implements Serializable {
-    private static final long serialVersionUID = 1L;
-    private long id;
-    private String firstName; // Corrigido aqui
+    private static final Long serialVersionUID = 1L;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    @Column(name = "first_name", nullable = false, length = 30)
+    private String firstName;
+    @Column(name = "last_name", nullable = false, length = 30)
     private String lastName;
+    @Column(nullable = false)
     private int age;
+    @Column(nullable = false)
     private String address;
+    @Column(nullable = false)
     private String gender;
 
-    public Person() {}
+    public Person() {
+    }
 
     public String getAddress() {
         return address;
@@ -34,7 +46,7 @@ public class Person implements Serializable {
         return firstName;
     }
 
-    public void setFirstName(String firstName) { 
+    public void setFirstName(String firstName) {
         this.firstName = firstName;
     }
 
@@ -46,11 +58,11 @@ public class Person implements Serializable {
         this.gender = gender;
     }
 
-    public long getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(long id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
